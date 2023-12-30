@@ -1,9 +1,9 @@
 class_name PixelPerfectNode extends CanvasLayer
 
-# ----------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------------
 # PIXEL PERFECT NODE
 # Coordinates texture and rendering, as well as the native resolution from inspector.
-# ----------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------------
 
 # EXPORTS
 @export_group("Required")
@@ -12,27 +12,65 @@ class_name PixelPerfectNode extends CanvasLayer
 
 @export_group("Palette")
 @export var src_palette_texture : Texture2D # Image reference for the palette source
-@export var accuracy_scale : int = 256 # Total value for one property (r,g,b)
+@export var accuracy_scale : int = 128 # Total value for one property (r,g,b)
+
+@export_group("Misc")
+@export var bg_colour : Color # Color of the background behind the main render
 
 # Onready values
-@onready var pixel_texture : PixelPerfectRect = $PixelTexture # Texture to draw pixel to
-@onready var pixel_palette : PixelPerfectPalette = $PixelPalette # Palette info script
+@onready var pixel_texture : PixelPerfectRect = $TextureRect # Texture to draw pixel to
+@onready var pixel_palette : PixelPerfectPalette = $Palette # Palette info script
 @onready var bg = $Bg
 
 @onready var scale_factor = 1 # Current runtime scale factor
 
 # Other values
-var pixel_offset : Vector2i = Vector2i.ZERO
+var pixel_offset : Vector2 = Vector2i.ZERO
+var screen_res : Vector2 = Vector2.ZERO
+var margins : Vector2 = Vector2.ZERO
+
+
+
+# -----
+# LOGIC
+# -----
 
 # On ready, set texture rect information and call update to get accurate info
 func _ready():
+	PixelPerfect.pixel_perfect = self
+	
 	# SETUP AT START
 	bg.show()
-	pixel_texture.show()
+	bg.color = bg_colour
 	
+	pixel_texture.show()
+
 	setup_sub_viewport()
 	setup_pixel_texture()
 	setup_palette()
+
+	# RESIZE SETUP
+	get_tree().get_root().connect("size_changed",Callable(self,"resize")) # Call resize on scene size change
+	resize()
+	
+	init_window_scale()
+# On window resize
+func resize(): 
+	# UPDATE SCREEN SIZE
+	screen_res = get_viewport().size # Update size
+	
+	# UPDATE SCALE FACTOR and MARGINS
+	scale_factor = calc_scale_factor(screen_res)
+	margins = calc_margins(screen_res)
+	
+	# UPDATE RENDER RECT
+	pixel_texture.update_rect(self)
+
+
+
+# --------
+# SETUP(s)
+# --------
 
 func setup_sub_viewport():
 	src_sub_viewport.size = native_pixel_res # Set the viewport to the pixel size (native size)
@@ -43,24 +81,84 @@ func setup_sub_viewport():
 	
 	src_sub_viewport.audio_listener_enable_2d = true # ENABLE AUDIO
 	src_sub_viewport.audio_listener_enable_3d = true
-
 func setup_pixel_texture():
-	# Set texture info to match viewport and info
-	pixel_texture.native_size = native_pixel_res
-	pixel_texture.scale_factor = scale_factor
-	
 	pixel_texture.texture = src_sub_viewport.get_texture() # Assign viewport texture to render from
-	pixel_texture.resize() # Resize at the start to get accurate starting dimensions
-
 func setup_palette():
-	pixel_palette.accuracy_scale = accuracy_scale
-	pixel_palette.palette_image = src_palette_texture
-	
-	pixel_palette.init()
+	pixel_palette.init_with_list(src_palette_texture, pixel_texture) # Initialise the palette
+	# pixel_palette.init_with_lookup(src_palette_texture, pixel_texture, accuracy_scale) # Initialise the palette
 
-func _process(_delta):
-	pixel_texture.pixel_offset = pixel_offset
 
-# On scale factor changed, make sure to update to a new one in case of references
-func _on_pixel_texture_scale_factor_changed(new_factor):
-	scale_factor = new_factor
+
+# ------------
+# CALCULATIONS
+# ------------
+
+# Calculate the max possible scale factor given a screen size
+func calc_scale_factor(screen_size):
+	var temp_scale_factor = 1
+	while (native_pixel_res * temp_scale_factor).x <= screen_size.x and (native_pixel_res * temp_scale_factor).y <= screen_size.y: # Increasing when smaller than dimensions, goes to one over
+		temp_scale_factor += 1
+	return temp_scale_factor - 1 # Return the size that fits within the screen
+# Calculate the margins to centre the screen
+func calc_margins(screen_size):
+	var x_margin = (screen_size.x - (scale_factor * native_pixel_res).x) / 2.0 # Position at center of window (difference of screen and upscaled divided by 2 since there are 2 margins)
+	var y_margin = (screen_size.y - (scale_factor * native_pixel_res).y) / 2.0
+	return Vector2(x_margin, y_margin)
+# Calculate maximum scale factor in the screen display
+func calc_max_scale_factor():
+	var max_screen_size = DisplayServer.screen_get_size()
+	return calc_scale_factor(max_screen_size) - 1
+
+
+
+# ---------------
+# WINDOW RESIZING
+# ---------------
+
+# NOTES
+# A little bit glitchy when the fullscreen changes or the window size
+# Window pivot is in the top left, not in the centre of the window
+
+var max_window_scale = 1
+var current_window_scale = 2 : set = set_current_window_scale, get = get_current_window_scale
+func set_current_window_scale(new_value):
+	current_window_scale = new_value
+
+	if current_window_scale <= 0:
+		current_window_scale = max_window_scale
+	elif current_window_scale > max_window_scale:
+		current_window_scale = 1
+
+	set_window_scale()
+func get_current_window_scale():
+	return current_window_scale
+
+func init_window_scale(): # Init max scale and apply
+	max_window_scale = calc_max_scale_factor()
+	set_window_scale()
+
+# WINDOW SCALE
+func set_window_scale():
+	DisplayServer.window_set_size(Vector2i(native_pixel_res.x * current_window_scale, native_pixel_res.y * current_window_scale))
+func increase_window_scale():
+	current_window_scale += 1
+	set_window_scale()
+func decrease_window_scale():
+	current_window_scale -= 1
+
+# FULLSCREEN TOGGLES
+func activate_fullscreen():
+	DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
+func activate_windowed():
+	DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
+func toggle_fullscreen():
+	if DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN:
+		activate_windowed()
+	else:
+		activate_fullscreen()
+
+# func _process(_delta):
+# 	if Input.is_action_just_pressed("increase"):
+# 		increase_window_scale()
+# 	elif Input.is_action_just_pressed("decrease"):
+# 		toggle_fullscreen()

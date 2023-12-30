@@ -1,41 +1,61 @@
 class_name PixelPerfectPalette extends Node
 
+# --------------------------------------------------------------------------------------------------------------------------------
 # PIXEL PERFECT PALETTE
 # Pass in an image containing the colour palette. Processes the colour palette into a list of colours and passes it to the shader.
+# --------------------------------------------------------------------------------------------------------------------------------
 
-@export var palette_image : Texture2D # Image reference to create palette
-@export var target_texture : PixelPerfectRect # Texture rect to render to
-
-@export var accuracy_scale : int = 256 # Total value for one property
+@export var list_shader: Shader
+@export var lookup_shader: Shader
 
 var colour_palette
 var lookup_texture
 
-# On start, generate the palette and assign it to the target texture
-func _ready():
-	pass
-
-func init():
+# INIT
+func init_with_lookup(palette_image, target_rect : PixelPerfectRect, accuracy_scale):
 	colour_palette = generate_palette(palette_image)
-	# assign_list_to_target_texture(colour_palette)
-	lookup_texture = generate_lookup_texture(colour_palette)
-	assign_lookup_to_target_texture(lookup_texture)
-
-# GENERATE the colour palette array with a texture
-func generate_palette(source : Texture2D):
-	var data = source.get_image() # Get pixels
-	var dimensions := Vector2i(palette_image.get_width(), palette_image.get_height()); # Get dimensions
-	var unique_colours = [] # Setup empty list
+	lookup_texture = generate_lookup_texture(colour_palette, accuracy_scale)
+	assign_lookup_to_target_texture(target_rect, lookup_texture, accuracy_scale)
 	
+	target_rect.material.shader = lookup_shader
+
+func init_with_list(palette_image, target_rect : PixelPerfectRect):
+	colour_palette = generate_palette(palette_image)
+	assign_list_to_target_texture(colour_palette, target_rect)
+	
+	target_rect.material.shader = list_shader
+
+func generate_palette(source : Texture2D): # GENERATE the colour palette array with a texture
+	var data = source.get_image() # Get pixels
+	var dimensions := Vector2i(source.get_width(), source.get_height()); # Get dimensions
+	var unique_colours = [] # Setup empty list
+
 	for x in range(dimensions.x):
 		for y in range(dimensions.y):
 			if data.get_pixel(x,y) in unique_colours: # If it's already here, skip this iteration
 				continue
 			unique_colours.append(data.get_pixel(x,y))
-	
+
 	return unique_colours # Return filled list
 
-func generate_lookup_texture(palette):
+
+
+# -----------
+# LIST SHADER
+# -----------
+
+func assign_list_to_target_texture(palette, target_texture : PixelPerfectRect): # ASSIGN to the target texture
+	# Assign to shader!
+	target_texture.get_material().set_shader_parameter("palette_colours", palette)
+	target_texture.get_material().set_shader_parameter("palette_size", len(palette))
+
+
+
+# ---------------
+# LOOK-UP TEXTURE
+# ---------------
+
+func generate_lookup_texture(palette, accuracy_scale : int):
 	var new_image = Image.create(accuracy_scale * accuracy_scale, accuracy_scale, false, Image.FORMAT_RGBA8)
 	
 	for r in range(accuracy_scale):
@@ -59,12 +79,7 @@ func generate_lookup_texture(palette):
 	
 	return ImageTexture.create_from_image(new_image)
 
-# ASSIGN to the target texture
-func assign_list_to_target_texture(palette):
-	# Assign to shader!
-	target_texture.get_material().set_shader_parameter("palette_colours", palette)
-	target_texture.get_material().set_shader_parameter("palette_size", len(palette))
-func assign_lookup_to_target_texture(texture: Texture2D):
+func assign_lookup_to_target_texture(target_texture : PixelPerfectRect, texture : Texture2D, accuracy_scale : int):
 	target_texture.get_material().set_shader_parameter("lookup_texture", texture)
 	target_texture.get_material().set_shader_parameter("texture_size", Vector2(texture.get_width(), texture.get_height()))
 	target_texture.get_material().set_shader_parameter("accuracy_scale", accuracy_scale)

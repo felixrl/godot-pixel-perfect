@@ -12,4 +12,3 @@ render_target_update_mode = 4
 
 [node name="PixelPerfect" parent="." node_paths=PackedStringArray("src_sub_viewport") instance=ExtResource("2_q7ewo")]
 src_sub_viewport = NodePath("../Viewport")
-accuracy_scale = 64

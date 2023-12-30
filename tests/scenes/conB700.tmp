@@ -1,0 +1,12 @@
+[gd_scene load_steps=3 format=3 uid="uid://bwtvr4dfhhj1o"]
+
+[ext_resource type="Texture2D" uid="uid://4ss8l3luk7bl" path="res://tests/man.png" id="1_7dtfm"]
+[ext_resource type="Script" path="res://tests/scenes/man.gd" id="2_wbj80"]
+
+[node name="Content" type="Node2D"]
+
+[node name="Camera" type="Camera2D" parent="."]
+
+[node name="Man" type="Sprite2D" parent="."]
+texture = ExtResource("1_7dtfm")
+script = ExtResource("2_wbj80")

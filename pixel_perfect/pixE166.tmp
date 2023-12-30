@@ -1,11 +1,10 @@
-[gd_scene load_steps=8 format=3 uid="uid://enxcgk81l2t0"]
+[gd_scene load_steps=7 format=3 uid="uid://enxcgk81l2t0"]
 
 [ext_resource type="Script" path="res://pixel_perfect/pixel_perfect_node.gd" id="1_m0evy"]
 [ext_resource type="Texture2D" uid="uid://c0fmpw5q3hv5d" path="res://pixel_perfect/demo_palettes/bit_monitor.png" id="2_alsv2"]
 [ext_resource type="Shader" path="res://pixel_perfect/shaders/lookup_palette.gdshader" id="2_i17fg"]
 [ext_resource type="Script" path="res://pixel_perfect/scripts/pixel_perfect_rect.gd" id="3_yq260"]
 [ext_resource type="Script" path="res://pixel_perfect/scripts/pixel_perfect_palette.gd" id="4_02e5q"]
-[ext_resource type="Shader" path="res://pixel_perfect/shaders/palette.gdshader" id="6_aylyp"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_gyg3d"]
 shader = ExtResource("2_i17fg")
@@ -49,7 +48,9 @@ grow_vertical = 2
 stretch_mode = 3
 script = ExtResource("3_yq260")
 
-[node name="Palette" type="Node" parent="."]
+[node name="Palette" type="Node" parent="." node_paths=PackedStringArray("target_texture")]
 script = ExtResource("4_02e5q")
-list_shader = ExtResource("6_aylyp")
-lookup_shader = ExtResource("2_i17fg")
+target_texture = NodePath("../TextureRect")
+accuracy_scale = 128
+
+[connection signal="scale_factor_changed" from="TextureRect" to="." method="_on_pixel_texture_scale_factor_changed"]

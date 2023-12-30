@@ -14,4 +14,4 @@ This is a reusable "library" which consists of code I have written to enforce a 
 2. Create a new SubViewport with any main game scenes or pixel UIs as children
 3. Assign SubViewport to PixelPerfect
 4. Adjust resolution, palette, offset, etc. on the PixelPerfect node
-5. Add PixelPerfectGlobal to autoload as PixelPerfect
+5. Add pixel_perfect.gd to autoload as PixelPerfect
