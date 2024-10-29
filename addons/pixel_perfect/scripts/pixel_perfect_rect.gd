@@ -34,8 +34,8 @@ func _input(event: InputEvent) -> void:
 	#if not is_mouse_inside:
 		#return
 	
-	event.global_position = PixelPerfect.get_mouse_world_pixel_positiion()
-	event.position = PixelPerfect.get_mouse_world_pixel_positiion()
+	event.global_position = PixelPerfect.get_mouse_world_pixel_position()
+	event.position = PixelPerfect.get_mouse_world_pixel_position()
 	sub_viewport_node.push_input(event)
 
 ## KEY AND THE REST INPUT

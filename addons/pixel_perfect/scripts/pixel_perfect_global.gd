@@ -29,9 +29,9 @@ func get_mouse_pixel_position() -> Vector2:
 ## Produces the mouse's PIXEL position in the viewport's WORLD,
 ## where (0, 0) is the world's origin,
 ## and the centre of the screen is assumed to be the position of the active Camera2D
-func get_mouse_world_pixel_positiion() -> Vector2: 
-	if not is_instance_valid(pixel_perfect):
-		return get_mouse_pixel_position()
+func get_mouse_world_pixel_position() -> Vector2: 
+	if not is_instance_valid(pixel_perfect) or not is_instance_valid(pixel_perfect.src_sub_viewport.get_camera_2d()):
+		return get_mouse_pixel_position() # Checking to make sure there IS a camera...
 	
 	return pixel_perfect.src_sub_viewport.get_camera_2d().position + get_mouse_pixel_position()
 
