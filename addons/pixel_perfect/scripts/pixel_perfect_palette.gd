@@ -1,9 +1,8 @@
 class_name PixelPerfectPalette extends Node
 
-# --------------------------------------------------------------------------------------------------------------------------------
-# PIXEL PERFECT PALETTE
-# Pass in an image containing the colour palette. Processes the colour palette into a list of colours and passes it to the shader.
-# --------------------------------------------------------------------------------------------------------------------------------
+## PIXEL PERFECT PALETTE
+## Pass in an image containing the colour palette. 
+## Processes the colour palette into a list of colours and passes it to the shader.
 
 @export var list_shader: Shader
 @export var lookup_shader: Shader

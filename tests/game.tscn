@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://bl5cs8dfjdrts"]
 
 [ext_resource type="PackedScene" uid="uid://bwtvr4dfhhj1o" path="res://tests/scenes/content.tscn" id="1_5n0yh"]
-[ext_resource type="PackedScene" uid="uid://enxcgk81l2t0" path="res://pixel_perfect/pixel_perfect.tscn" id="2_q7ewo"]
+[ext_resource type="PackedScene" uid="uid://enxcgk81l2t0" path="res://addons/pixel_perfect/pixel_perfect.tscn" id="2_q7ewo"]
 
 [node name="Game" type="Node2D"]
 

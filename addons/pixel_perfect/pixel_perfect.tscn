@@ -1,0 +1,66 @@
+[gd_scene load_steps=9 format=3 uid="uid://enxcgk81l2t0"]
+
+[ext_resource type="Script" path="res://addons/pixel_perfect/scripts/pixel_perfect_node.gd" id="1_m0evy"]
+[ext_resource type="Texture2D" uid="uid://c0fmpw5q3hv5d" path="res://addons/pixel_perfect/demo_palettes/bit_monitor.png" id="2_alsv2"]
+[ext_resource type="Shader" path="res://addons/pixel_perfect/shaders/lookup_palette.gdshader" id="2_i17fg"]
+[ext_resource type="Script" path="res://addons/pixel_perfect/scripts/pixel_perfect_rect.gd" id="3_yq260"]
+[ext_resource type="Script" path="res://addons/pixel_perfect/scripts/pixel_perfect_palette.gd" id="4_02e5q"]
+[ext_resource type="Shader" path="res://addons/pixel_perfect/shaders/palette.gdshader" id="6_aylyp"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_gyg3d"]
+shader = ExtResource("2_i17fg")
+shader_parameter/texture_size = null
+shader_parameter/accuracy_scale = 256
+shader_parameter/camera_offset = Vector2(0, 0)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_mt8b2"]
+
+[node name="PixelPerfect" type="CanvasLayer"]
+script = ExtResource("1_m0evy")
+src_palette_texture = ExtResource("2_alsv2")
+
+[node name="Bg" type="ColorRect" parent="."]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -10000.0
+offset_top = -10000.0
+offset_right = 10000.0
+offset_bottom = 10000.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="TextureRect" type="TextureRect" parent="."]
+texture_filter = 1
+material = SubResource("ShaderMaterial_gyg3d")
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -256.0
+offset_top = -144.0
+offset_right = 256.0
+offset_bottom = 144.0
+grow_horizontal = 2
+grow_vertical = 2
+stretch_mode = 3
+script = ExtResource("3_yq260")
+
+[node name="Area2D" type="Area2D" parent="TextureRect"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TextureRect/Area2D"]
+shape = SubResource("RectangleShape2D_mt8b2")
+
+[node name="Palette" type="Node" parent="."]
+script = ExtResource("4_02e5q")
+list_shader = ExtResource("6_aylyp")
+lookup_shader = ExtResource("2_i17fg")
+
+[connection signal="mouse_entered" from="TextureRect" to="TextureRect" method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="TextureRect" to="TextureRect" method="_on_mouse_exited"]
+[connection signal="input_event" from="TextureRect/Area2D" to="TextureRect" method="_on_area_2d_input_event"]

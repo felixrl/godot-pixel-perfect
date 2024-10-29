@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c0fmpw5q3hv5d"
-path="res://.godot/imported/bit_monitor.png-ced7a7eb100974ac9053636df384e39c.ctex"
+path="res://.godot/imported/bit_monitor.png-2b456ffdf901a435222cf8ab58af1318.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://pixel_perfect/demo_palettes/bit_monitor.png"
-dest_files=["res://.godot/imported/bit_monitor.png-ced7a7eb100974ac9053636df384e39c.ctex"]
+source_file="res://addons/pixel_perfect/demo_palettes/bit_monitor.png"
+dest_files=["res://.godot/imported/bit_monitor.png-2b456ffdf901a435222cf8ab58af1318.ctex"]
 
 [params]
 

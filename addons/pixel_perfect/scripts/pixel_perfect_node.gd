@@ -1,40 +1,43 @@
-class_name PixelPerfectNode extends CanvasLayer
+class_name PixelPerfectNode 
+extends CanvasLayer
 
-# -----------------------------------------------------------------------------------
-# PIXEL PERFECT NODE
-# Coordinates texture and rendering, as well as the native resolution from inspector.
-# -----------------------------------------------------------------------------------
+## PIXEL PERFECT NODE
+## User accessible exports for resolution, palette, etc.
+## Assign & process SubViewport to TextureRect logic
+## Window resizing
 
-# EXPORTS
+## EXPORTS
 @export_group("Required")
-@export var native_pixel_res : Vector2i = Vector2i(512, 288) # Native size (editable from inspector)
+# Native size (editable from inspector)
+@export var native_pixel_res : Vector2i = Vector2i(512, 288)
 @export var src_sub_viewport : SubViewport
 
 @export_group("Palette")
-@export var src_palette_texture : Texture2D # Image reference for the palette source
-@export var accuracy_scale : int = 128 # Total value for one property (r,g,b)
+# Image reference for the palette source
+@export var src_palette_texture : Texture2D 
+# Total value for one property (r,g,b) (only used for texture map mode)
+@export var accuracy_scale : int = 128 
 
 @export_group("Misc")
-@export var bg_colour : Color # Color of the background behind the main render
+# Color of the background behind the main render
+@export var bg_colour : Color
 
-# Onready values
-@onready var pixel_texture : PixelPerfectRect = $TextureRect # Texture to draw pixel to
-@onready var pixel_palette : PixelPerfectPalette = $Palette # Palette info script
+## VARIABLES
+# Texture to draw pixel to
+@onready var pixel_texture : PixelPerfectRect = $TextureRect
+# Palette info script
+@onready var pixel_palette : PixelPerfectPalette = $Palette 
 @onready var bg = $Bg
+# Current runtime scale factor
+@onready var scale_factor = 1 
 
-@onready var scale_factor = 1 # Current runtime scale factor
-
-# Other values
 var pixel_offset : Vector2 = Vector2i.ZERO
 var screen_res : Vector2 = Vector2.ZERO
 var margins : Vector2 = Vector2.ZERO
 
 
 
-# -----
-# LOGIC
-# -----
-
+## LOGIC
 # On ready, set texture rect information and call update to get accurate info
 func _ready():
 	PixelPerfect.pixel_perfect = self
@@ -54,6 +57,7 @@ func _ready():
 	resize()
 	
 	init_window_scale()
+
 # On window resize
 func resize(): 
 	# UPDATE SCREEN SIZE
@@ -68,10 +72,7 @@ func resize():
 
 
 
-# --------
-# SETUP(s)
-# --------
-
+## SETUP
 func setup_sub_viewport():
 	src_sub_viewport.size = native_pixel_res # Set the viewport to the pixel size (native size)
 	
@@ -83,16 +84,14 @@ func setup_sub_viewport():
 	src_sub_viewport.audio_listener_enable_3d = true
 func setup_pixel_texture():
 	pixel_texture.texture = src_sub_viewport.get_texture() # Assign viewport texture to render from
+	pixel_texture.sub_viewport_node = src_sub_viewport # Set viewport for input handling
 func setup_palette():
 	pixel_palette.init_with_list(src_palette_texture, pixel_texture) # Initialise the palette
 	# pixel_palette.init_with_lookup(src_palette_texture, pixel_texture, accuracy_scale) # Initialise the palette
 
 
 
-# ------------
-# CALCULATIONS
-# ------------
-
+## CALCULATIONS
 # Calculate the max possible scale factor given a screen size
 func calc_scale_factor(screen_size):
 	var temp_scale_factor = 1
@@ -111,9 +110,7 @@ func calc_max_scale_factor():
 
 
 
-# ---------------
-# WINDOW RESIZING
-# ---------------
+## WINDOW RESIZING
 
 # NOTES
 # A little bit glitchy when the fullscreen changes or the window size
@@ -162,3 +159,6 @@ func toggle_fullscreen():
 # 		increase_window_scale()
 # 	elif Input.is_action_just_pressed("decrease"):
 # 		toggle_fullscreen()
+
+func _process(delta: float) -> void:
+	pass

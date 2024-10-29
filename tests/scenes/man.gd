@@ -8,5 +8,9 @@ func _process(delta):
 	# time += delta
 	# position = Vector2(0, -sin(time) * 32)
 	
-	global_position = PixelPerfect.get_cursor_world_position_relative_to($"../Camera".position)
+	# global_position = PixelPerfect.get_cursor_world_position_relative_to($"../Camera".position)
 	# print(global_position)
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventMouseMotion:
+		global_position = event.global_position

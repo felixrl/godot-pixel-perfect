@@ -6,6 +6,7 @@
 [node name="Content" type="Node2D"]
 
 [node name="Camera" type="Camera2D" parent="."]
+position = Vector2(-100, 0)
 
 [node name="Man" type="Sprite2D" parent="."]
 texture = ExtResource("1_7dtfm")
