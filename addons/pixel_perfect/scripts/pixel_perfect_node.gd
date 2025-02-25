@@ -25,8 +25,6 @@ extends CanvasLayer
 ## VARIABLES
 # Texture to draw pixel to
 @onready var pixel_texture : PixelPerfectRect = $TextureRect
-# Palette info script
-@onready var pixel_palette : PixelPerfectPalette = $Palette 
 @onready var bg = $Bg
 # Current runtime scale factor
 @onready var scale_factor = 1 
@@ -86,7 +84,8 @@ func setup_pixel_texture():
 	pixel_texture.texture = src_sub_viewport.get_texture() # Assign viewport texture to render from
 	pixel_texture.sub_viewport_node = src_sub_viewport # Set viewport for input handling
 func setup_palette():
-	pixel_palette.init_with_list(src_palette_texture, pixel_texture) # Initialise the palette
+	pass
+	#pixel_palette.init_with_list(src_palette_texture, pixel_texture) # Initialise the palette
 	# pixel_palette.init_with_lookup(src_palette_texture, pixel_texture, accuracy_scale) # Initialise the palette
 
 

@@ -2,16 +2,12 @@
 
 [ext_resource type="Script" path="res://addons/pixel_perfect/scripts/pixel_perfect_node.gd" id="1_m0evy"]
 [ext_resource type="Texture2D" uid="uid://c0fmpw5q3hv5d" path="res://addons/pixel_perfect/demo_palettes/bit_monitor.png" id="2_alsv2"]
-[ext_resource type="Shader" path="res://addons/pixel_perfect/shaders/lookup_palette.gdshader" id="2_i17fg"]
 [ext_resource type="Script" path="res://addons/pixel_perfect/scripts/pixel_perfect_rect.gd" id="3_yq260"]
-[ext_resource type="Script" path="res://addons/pixel_perfect/scripts/pixel_perfect_palette.gd" id="4_02e5q"]
-[ext_resource type="Shader" path="res://addons/pixel_perfect/shaders/palette.gdshader" id="6_aylyp"]
+[ext_resource type="Script" path="res://addons/pixel_perfect/palette_enforcement/palette_node.gd" id="6_7grth"]
+[ext_resource type="Shader" path="res://addons/pixel_perfect/palette_enforcement/palette_match.gdshader" id="6_aylyp"]
+[ext_resource type="Texture2D" uid="uid://drvl0ebe6itye" path="res://addons/pixel_perfect/demo_palettes/berry-shake-32x.png" id="7_mu8cc"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_gyg3d"]
-shader = ExtResource("2_i17fg")
-shader_parameter/texture_size = null
-shader_parameter/accuracy_scale = 256
-shader_parameter/camera_offset = Vector2(0, 0)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_mt8b2"]
 
@@ -56,10 +52,12 @@ script = ExtResource("3_yq260")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="TextureRect/Area2D"]
 shape = SubResource("RectangleShape2D_mt8b2")
 
-[node name="Palette" type="Node" parent="."]
-script = ExtResource("4_02e5q")
-list_shader = ExtResource("6_aylyp")
-lookup_shader = ExtResource("2_i17fg")
+[node name="Node" type="Node" parent="." node_paths=PackedStringArray("rect")]
+script = ExtResource("6_7grth")
+rect = NodePath("../TextureRect")
+palette_texture = ExtResource("7_mu8cc")
+distance_function = 1
+palette_shader = ExtResource("6_aylyp")
 
 [connection signal="mouse_entered" from="TextureRect" to="TextureRect" method="_on_mouse_entered"]
 [connection signal="mouse_exited" from="TextureRect" to="TextureRect" method="_on_mouse_exited"]

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bxjwfce2epsq3"
-path="res://.godot/imported/generated.png-146b70e21650f37ad42fd2a44dda50d1.ctex"
+uid="uid://dfqhbwufwklw4"
+path="res://.godot/imported/cielab_lookup.png-a9e99a08c962c22b8b38d1fa37f33e19.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://generated.png"
-dest_files=["res://.godot/imported/generated.png-146b70e21650f37ad42fd2a44dda50d1.ctex"]
+source_file="res://addons/pixel_perfect/baked_lookup_textures/cielab_lookup.png"
+dest_files=["res://.godot/imported/cielab_lookup.png-a9e99a08c962c22b8b38d1fa37f33e19.ctex"]
 
 [params]
 
