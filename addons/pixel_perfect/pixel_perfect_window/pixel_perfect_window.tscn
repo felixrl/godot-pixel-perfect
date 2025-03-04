@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://lfwkvoblx353"]
+
+[ext_resource type="Script" path="res://addons/pixel_perfect/pixel_perfect_window/pixel_perfect_window.gd" id="1_ogoyo"]
+
+[node name="PixelPerfectWindow" type="TextureRect"]
+offset_right = 640.0
+offset_bottom = 360.0
+script = ExtResource("1_ogoyo")
