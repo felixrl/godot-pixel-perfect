@@ -84,12 +84,18 @@ func bake() -> int:
 		return 3
 	print("- Registed the palette!")
 	
-	lookup_texture = ImageTexture.create_from_image(PaletteLookupRegistry.find_palette_lut(palette_id))
-	
-	## ASSIGN TO SHADERS...
-	_assign_lookup_texture_to_windows()
+	## SWAP TO THE NEW PALETTE
+	swap_to(palette_id)
 	
 	return 0
+
+func swap_to(new_palette_id: String) -> void:
+	var lut_image: Image = PaletteLookupRegistry.find_palette_lut(new_palette_id)
+	if lut_image == null:
+		print("ERROR! Cannot load palette with id \"" + new_palette_id + "\" because it is not in the registry.")
+		return
+	lookup_texture = ImageTexture.create_from_image(lut_image)
+	_assign_lookup_texture_to_windows()
 
 ## Update lookup texture with metadata and shader for every referenced layer
 func _assign_lookup_texture_to_windows():

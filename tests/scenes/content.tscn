@@ -9,16 +9,16 @@
 [node name="Polygon2D" type="Polygon2D" parent="."]
 position = Vector2(-4, 0)
 color = Color(0.744649, 1.34766e-06, 0.37623, 1)
-polygon = PackedVector2Array(-636, -356, 913, -185, 682, 378, -522, 461, -767, 58)
+polygon = PackedVector2Array(-115, -64, 296, -259, 170, 250, -269, 210, 69, 144)
 
 [node name="MyCamera" parent="." instance=ExtResource("3_vjlkr")]
 
 [node name="Man" type="Sprite2D" parent="."]
-position = Vector2(-536, 0)
+position = Vector2(279, -107)
 texture = ExtResource("1_7dtfm")
 
 [node name="Man2" type="Sprite2D" parent="."]
-position = Vector2(-331, -144)
+position = Vector2(-228, 10)
 texture = ExtResource("1_7dtfm")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]

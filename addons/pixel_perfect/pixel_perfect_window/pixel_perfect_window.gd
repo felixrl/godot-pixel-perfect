@@ -5,9 +5,9 @@ extends Control
 ## A node that encapsulates a texture rect that renders a viewport in pixel perfect
 ## with clipping
 
-## TODO Smooth scrolling
 ## TODO: DEALING WITH MOUSE INPUT!
 ## NOTE: Transparency toggle with enforcement??
+## NOTE: Save data to this object and then load to children to prevent data loss
 
 @export var source_viewport: SubViewport
 @export var native_resolution: Vector2i = Vector2i(640, 360)
