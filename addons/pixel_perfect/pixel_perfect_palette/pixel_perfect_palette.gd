@@ -12,8 +12,8 @@ enum DistanceFunction {
 	CIELAB
 }
 
-## Windows to which the shader and palette will be applied
-@export var windows: Array[PixelPerfectWindow]
+## Window to which the shader and palette will be applied
+@export var window: PixelPerfectWindow
 
 ## Allow alpha copying to destination to allow transparent layers
 @export var use_transparency: bool = true
@@ -93,8 +93,7 @@ func bake() -> int:
 
 ## Update lookup texture with metadata and shader for every referenced layer
 func _assign_lookup_texture_to_windows():
-	for window in windows:
-		_assign_lookup_texture(window.get_shader_material(), lookup_texture, accuracy_scale)
+	_assign_lookup_texture(window.get_shader_material(), lookup_texture, accuracy_scale)
 
 ## Assign the lookup texture shader and corresponding metadata to a palette material
 func _assign_lookup_texture(shader_material: ShaderMaterial, lookup_texture: Texture2D, accuracy_scale: int):

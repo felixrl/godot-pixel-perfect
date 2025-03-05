@@ -5,9 +5,9 @@ extends Node
 ## A node that encapsulates the functionality for centering and resizing
 ## a PixelPerfectWindow
 
-## Windows to which the resizer will be applied
+## Window to which the resizer will be applied
 ## NOTE: All windows will gain the same native resolution
-@export var windows: Array[PixelPerfectWindow]
+@export var window: PixelPerfectWindow
 
 ## The native resolution
 @export var native_resolution: Vector2i = Vector2i(640, 360)
@@ -32,13 +32,12 @@ func resize():
 	scale_factor = compute_scale_factor(screen_resolution)
 	margins = compute_margins(screen_resolution)
 	
-	for window: PixelPerfectWindow in windows:
-		window.native_resolution = native_resolution
-		window.scale_factor = scale_factor
-		if is_centred:
-			window.margins = margins
-		else:
-			window.margins = Vector2.ZERO
+	window.native_resolution = native_resolution
+	window.scale_factor = scale_factor
+	if is_centred:
+		window.margins = margins
+	else:
+		window.margins = Vector2.ZERO
 
 #region COMPUTATIONS
 

@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://ckjmstal1g5vp"]
+
+[ext_resource type="Script" uid="uid://yxwr5lu1qj0x" path="res://tests/scenes/components/my_camera.gd" id="1_4d17c"]
+
+[node name="MyCamera" type="Camera2D"]
+process_callback = 0
+script = ExtResource("1_4d17c")
+metadata/_custom_type_script = "uid://dvt8736r1r1q5"
