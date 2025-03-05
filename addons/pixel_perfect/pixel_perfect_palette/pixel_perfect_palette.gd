@@ -15,6 +15,9 @@ enum DistanceFunction {
 ## Windows to which the shader and palette will be applied
 @export var windows: Array[PixelPerfectWindow]
 
+## Allow alpha copying to destination to allow transparent layers
+@export var use_transparency: bool = true
+
 @export_category("Palette Generation")
 ## Texture used to dynamically produce a list of unique colours for the palette
 @export var palette_texture: Texture2D
@@ -42,7 +45,7 @@ func _set_bake_palette(value: bool):
 		print("---")
 	bake_palette = false
 
-var palette_shader: Shader = preload("res://addons/pixel_perfect/pixel_perfect_palette/palette_match.gdshader")
+var palette_shader: Shader = preload("res://addons/pixel_perfect/pixel_perfect_palette/shaders/palette_lookup.gdshader")
 
 var palette
 var lookup_texture
@@ -99,3 +102,4 @@ func _assign_lookup_texture(shader_material: ShaderMaterial, lookup_texture: Tex
 	shader_material.set_shader_parameter("lookup_texture", lookup_texture)
 	shader_material.set_shader_parameter("texture_size", Vector2(lookup_texture.get_width(), lookup_texture.get_height()))
 	shader_material.set_shader_parameter("accuracy_scale", accuracy_scale)
+	shader_material.set_shader_parameter("use_transparency", use_transparency)

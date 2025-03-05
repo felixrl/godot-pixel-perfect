@@ -23,7 +23,8 @@ func _ready() -> void:
 	resize()
 
 func _process(delta: float) -> void:
-	resize()
+	#resize()
+	pass
 
 ## Callback on window resize...
 func resize():

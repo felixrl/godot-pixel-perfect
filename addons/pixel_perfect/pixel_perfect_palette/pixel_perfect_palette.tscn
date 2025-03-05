@@ -5,6 +5,7 @@
 
 [node name="PixelPerfectPalette" type="Node"]
 script = ExtResource("1_gwajt")
+use_transparency = null
 palette_texture = ExtResource("2_343wy")
 palette_id = "mono"
 distance_function = 1

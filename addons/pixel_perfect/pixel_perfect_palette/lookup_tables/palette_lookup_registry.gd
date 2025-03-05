@@ -15,6 +15,7 @@ static func find_palette_lut(palette_id: String) -> Image:
 		return luts.get(palette_id)
 	if FileAccess.file_exists(path):
 		var image = Image.load_from_file(path)
+		luts[palette_id] = image
 		return image
 	return null
 

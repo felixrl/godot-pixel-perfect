@@ -11,7 +11,6 @@ var pixel_perfect : PixelPerfectWindow # PIXEL PERFECT NODE TO ACCESS
 
 @onready var screen_resolution: Vector2i = get_screen_resolution()
 func get_screen_resolution() -> Vector2i:
-	print("Hai!")
 	return get_viewport().size
 
 #region SCREEN SPACE

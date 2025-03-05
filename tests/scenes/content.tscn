@@ -6,6 +6,7 @@
 [node name="Content" type="Node2D"]
 
 [node name="Polygon2D" type="Polygon2D" parent="."]
+visible = false
 position = Vector2(-4, 0)
 color = Color(0.744649, 1.34766e-06, 0.37623, 1)
 polygon = PackedVector2Array(-636, -356, 913, -185, 682, 378, -522, 461, -767, 58)
