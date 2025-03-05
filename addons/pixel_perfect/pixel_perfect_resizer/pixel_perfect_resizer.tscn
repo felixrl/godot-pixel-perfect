@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://bqcs1osjhk7st"]
 
-[ext_resource type="Script" path="res://addons/pixel_perfect/pixel_perfect_resizer/pixel_perfect_resizer.gd" id="1_fnac1"]
+[ext_resource type="Script" uid="uid://cdp6kuylyv80t" path="res://addons/pixel_perfect/pixel_perfect_resizer/pixel_perfect_resizer.gd" id="1_fnac1"]
 
 [node name="PixelPerfectResizer" type="Node"]
 script = ExtResource("1_fnac1")

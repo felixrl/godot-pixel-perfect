@@ -1,11 +1,10 @@
 [gd_scene load_steps=3 format=3 uid="uid://dodqwbu54bcq1"]
 
-[ext_resource type="Script" path="res://addons/pixel_perfect/pixel_perfect_palette/pixel_perfect_palette.gd" id="1_gwajt"]
+[ext_resource type="Script" uid="uid://bqd3un1bpu0ne" path="res://addons/pixel_perfect/pixel_perfect_palette/pixel_perfect_palette.gd" id="1_gwajt"]
 [ext_resource type="Texture2D" uid="uid://c0fmpw5q3hv5d" path="res://addons/pixel_perfect/demo_palettes/bit_monitor.png" id="2_343wy"]
 
 [node name="PixelPerfectPalette" type="Node"]
 script = ExtResource("1_gwajt")
-use_transparency = null
 palette_texture = ExtResource("2_343wy")
 palette_id = "mono"
 distance_function = 1

@@ -1,9 +1,9 @@
 [gd_scene load_steps=9 format=3 uid="uid://enxcgk81l2t0"]
 
-[ext_resource type="Script" path="res://addons/pixel_perfect/scripts/pixel_perfect_node.gd" id="1_m0evy"]
+[ext_resource type="Script" uid="uid://cxwvt3y0sh7ce" path="res://addons/pixel_perfect/scripts/pixel_perfect_node.gd" id="1_m0evy"]
 [ext_resource type="Texture2D" uid="uid://c0fmpw5q3hv5d" path="res://addons/pixel_perfect/demo_palettes/bit_monitor.png" id="2_alsv2"]
-[ext_resource type="Script" path="res://addons/pixel_perfect/scripts/pixel_perfect_rect.gd" id="3_yq260"]
-[ext_resource type="Shader" path="res://addons/pixel_perfect/pixel_perfect_palette/shaders/palette_lookup.gdshader" id="6_aylyp"]
+[ext_resource type="Script" uid="uid://be84xsn4o103x" path="res://addons/pixel_perfect/scripts/pixel_perfect_rect.gd" id="3_yq260"]
+[ext_resource type="Shader" uid="uid://beh7vuyg3u120" path="res://addons/pixel_perfect/pixel_perfect_palette/shaders/palette_lookup.gdshader" id="6_aylyp"]
 [ext_resource type="Texture2D" uid="uid://drvl0ebe6itye" path="res://addons/pixel_perfect/demo_palettes/berry-shake-32x.png" id="7_mu8cc"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_gyg3d"]
