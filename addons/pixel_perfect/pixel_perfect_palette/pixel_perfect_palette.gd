@@ -89,6 +89,10 @@ func bake() -> int:
 	
 	return 0
 
+## TODO: More uniform palette hotswapping system
+## TODO: Pre-load into memory all palettes/LUTs into registry
+## Swaps to the palette associated with the new palette id if it's in the registry.
+## Prints an error and returns early if there is no palette with that id
 func swap_to(new_palette_id: String) -> void:
 	var lut_image: Image = PaletteLookupRegistry.find_palette_lut(new_palette_id)
 	if lut_image == null:

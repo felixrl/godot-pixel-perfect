@@ -1,8 +1,10 @@
-[gd_scene load_steps=4 format=3 uid="uid://bwtvr4dfhhj1o"]
+[gd_scene load_steps=6 format=3 uid="uid://bwtvr4dfhhj1o"]
 
 [ext_resource type="Texture2D" uid="uid://4ss8l3luk7bl" path="res://tests/man.png" id="1_7dtfm"]
+[ext_resource type="Script" uid="uid://cqun7ij436l06" path="res://tests/scenes/man.gd" id="3_0n50k"]
 [ext_resource type="Texture2D" uid="uid://ddr1vrf04uw36" path="res://tests/police_car_01.png" id="3_s738m"]
 [ext_resource type="PackedScene" uid="uid://ckjmstal1g5vp" path="res://tests/scenes/components/my_camera.tscn" id="3_vjlkr"]
+[ext_resource type="Script" uid="uid://cy24c85b4puhk" path="res://tests/scenes/TestPlayer.gd" id="5_gb4ju"]
 
 [node name="Content" type="Node2D"]
 
@@ -11,16 +13,20 @@ position = Vector2(-4, 0)
 color = Color(0.744649, 1.34766e-06, 0.37623, 1)
 polygon = PackedVector2Array(-115, -64, 296, -259, 170, 250, -269, 210, 69, 144)
 
-[node name="MyCamera" parent="." instance=ExtResource("3_vjlkr")]
+[node name="MyCamera" parent="." node_paths=PackedStringArray("follow_node") instance=ExtResource("3_vjlkr")]
+follow_node = NodePath("../Sprite2D")
 
 [node name="Man" type="Sprite2D" parent="."]
 position = Vector2(279, -107)
 texture = ExtResource("1_7dtfm")
+script = ExtResource("3_0n50k")
 
 [node name="Man2" type="Sprite2D" parent="."]
 position = Vector2(-228, 10)
 texture = ExtResource("1_7dtfm")
+script = ExtResource("3_0n50k")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture_filter = 1
 texture = ExtResource("3_s738m")
+script = ExtResource("5_gb4ju")

@@ -21,6 +21,7 @@ func set_smooth_position(new_local_position: Vector2) -> void:
 
 var subpixel_offset: Vector2 = Vector2.ZERO
 
+## GET ROUNDED VALUES
 func get_rounded_position() -> Vector2:
 	return round(smooth_position)
 func get_rounded_global_position() -> Vector2:
