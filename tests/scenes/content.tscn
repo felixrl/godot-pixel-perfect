@@ -1,19 +1,26 @@
-[gd_scene load_steps=3 format=3 uid="uid://bwtvr4dfhhj1o"]
+[gd_scene load_steps=4 format=3 uid="uid://bwtvr4dfhhj1o"]
 
 [ext_resource type="Texture2D" uid="uid://4ss8l3luk7bl" path="res://tests/man.png" id="1_7dtfm"]
-[ext_resource type="Script" path="res://tests/scenes/man.gd" id="2_wbj80"]
+[ext_resource type="PackedScene" uid="uid://c2akrw7icdaui" path="res://addons/pixel_perfect/smooth_subpixel_camera/subpixel_camera.tscn" id="3_8daci"]
+[ext_resource type="Texture2D" uid="uid://ddr1vrf04uw36" path="res://tests/police_car_01.png" id="3_s738m"]
 
 [node name="Content" type="Node2D"]
 
 [node name="Polygon2D" type="Polygon2D" parent="."]
-visible = false
 position = Vector2(-4, 0)
 color = Color(0.744649, 1.34766e-06, 0.37623, 1)
 polygon = PackedVector2Array(-636, -356, 913, -185, 682, 378, -522, 461, -767, 58)
 
-[node name="Camera" type="Camera2D" parent="."]
-position = Vector2(-100, 0)
-
 [node name="Man" type="Sprite2D" parent="."]
+position = Vector2(-536, 0)
 texture = ExtResource("1_7dtfm")
-script = ExtResource("2_wbj80")
+
+[node name="Man2" type="Sprite2D" parent="."]
+position = Vector2(-331, -144)
+texture = ExtResource("1_7dtfm")
+
+[node name="SubpixelCamera" parent="." instance=ExtResource("3_8daci")]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("3_s738m")

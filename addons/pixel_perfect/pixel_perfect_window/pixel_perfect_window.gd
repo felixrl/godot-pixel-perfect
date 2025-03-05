@@ -5,8 +5,8 @@ extends TextureRect
 ## A node that encapsulates a texture rect that renders a viewport in pixel perfect
 
 ## TODO Smooth scrolling
-## TODO Optional transparency
 ## TODO: DEALING WITH MOUSE INPUT!
+## NOTE: Transparency toggle with enforcement??
 
 @export var source_viewport: SubViewport
 @export var native_resolution: Vector2i = Vector2i(640, 360)
@@ -20,11 +20,17 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	if source_viewport != null:
-		source_viewport.size = native_resolution
-	size = native_resolution
+		source_viewport.size = native_resolution + Vector2i(2, 2)
+	size = native_resolution + Vector2i(2, 2)
 	
 	scale = Vector2(scale_factor, scale_factor)
-	position = margins
+	position = margins - Vector2(1, 1)
+	
+	var camera = source_viewport.get_camera_2d()
+	if (camera != null):
+		if "subpixel_offset" in camera:
+			print(camera.subpixel_offset)
+			get_shader_material().set_shader_parameter("camera_offset", -camera.subpixel_offset)
 
 func get_shader_material() -> Material:
 	if (get_material() == null):

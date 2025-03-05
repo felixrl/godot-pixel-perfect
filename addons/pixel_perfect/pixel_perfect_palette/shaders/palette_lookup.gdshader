@@ -22,6 +22,8 @@ uniform bool use_transparency = true;
 // in the range [0, 256], where 256 is the full alpha spectrum
 uniform int transparency_scale = 256;
 
+// TODO: Split off transparency to save on if statement?
+
 // Produces the color at the given coords on the lookup texture
 // coords is in integer pixels within texture_size xy range
 vec4 get_lookup_color(ivec2 lookup_coords) {

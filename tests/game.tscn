@@ -10,6 +10,4 @@ render_target_update_mode = 4
 
 [node name="Content" parent="Viewport" instance=ExtResource("1_5n0yh")]
 
-[node name="PixelPerfect" parent="." node_paths=PackedStringArray("src_sub_viewport") instance=ExtResource("2_q7ewo")]
-native_pixel_res = Vector2i(640, 360)
-src_sub_viewport = NodePath("../Viewport")
+[node name="PixelPerfect" parent="." instance=ExtResource("2_q7ewo")]

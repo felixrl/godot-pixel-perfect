@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://c2akrw7icdaui"]
+
+[ext_resource type="Script" path="res://addons/pixel_perfect/smooth_subpixel_camera/subpixel_camera.gd" id="1_0anhj"]
+
+[node name="SubpixelCamera" type="Camera2D"]
+process_callback = 0
+position_smoothing_speed = 0.5
+script = ExtResource("1_0anhj")
