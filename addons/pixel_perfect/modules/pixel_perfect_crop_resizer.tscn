@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://cnplgbvjtgsqd"]
+
+[ext_resource type="Script" uid="uid://nwj132dnp8kl" path="res://addons/pixel_perfect/pixel_perfect_resizer/pixel_perfect_crop_resizer.gd" id="1_gh7f2"]
+
+[node name="PixelPerfectCropResizer" type="Node"]
+script = ExtResource("1_gh7f2")

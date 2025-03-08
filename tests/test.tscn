@@ -1,16 +1,18 @@
-[gd_scene load_steps=6 format=3 uid="uid://b8ptpdrkdbage"]
+[gd_scene load_steps=8 format=3 uid="uid://b8ptpdrkdbage"]
 
 [ext_resource type="PackedScene" uid="uid://bwtvr4dfhhj1o" path="res://tests/scenes/content.tscn" id="1_j15u7"]
-[ext_resource type="PackedScene" uid="uid://dodqwbu54bcq1" path="res://addons/pixel_perfect/pixel_perfect_palette/pixel_perfect_palette.tscn" id="3_2rcqd"]
-[ext_resource type="PackedScene" uid="uid://bqcs1osjhk7st" path="res://addons/pixel_perfect/pixel_perfect_resizer/pixel_perfect_resizer.tscn" id="4_s1i3x"]
-[ext_resource type="PackedScene" uid="uid://lfwkvoblx353" path="res://addons/pixel_perfect/pixel_perfect_window/pixel_perfect_window.tscn" id="5_dsb46"]
+[ext_resource type="PackedScene" uid="uid://dodqwbu54bcq1" path="res://addons/pixel_perfect/modules/pixel_perfect_palette.tscn" id="3_2rcqd"]
+[ext_resource type="PackedScene" uid="uid://lfwkvoblx353" path="res://addons/pixel_perfect/modules/pixel_perfect_window.tscn" id="5_dsb46"]
 [ext_resource type="Texture2D" uid="uid://drvl0ebe6itye" path="res://addons/pixel_perfect/demo_palettes/berry-shake-32x.png" id="5_oqkue"]
+[ext_resource type="PackedScene" uid="uid://ltlslb8vhgsy" path="res://addons/pixel_perfect/modules/pixel_perfect_integer_resizer.tscn" id="5_uofsi"]
+[ext_resource type="PackedScene" uid="uid://cnplgbvjtgsqd" path="res://addons/pixel_perfect/modules/pixel_perfect_crop_resizer.tscn" id="6_uofsi"]
+[ext_resource type="PackedScene" uid="uid://ddbswfwvl52l4" path="res://addons/pixel_perfect/modules/pixel_perfect_centerer.tscn" id="7_jenrn"]
 
 [node name="Test" type="Node2D"]
 
 [node name="SubViewport" type="SubViewport" parent="."]
 transparent_bg = true
-size = Vector2i(402, 202)
+size = Vector2i(642, 362)
 
 [node name="Content" parent="SubViewport" instance=ExtResource("1_j15u7")]
 
@@ -22,16 +24,18 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.203761, 0.165736, 0.499459, 1)
+color = Color(0, 0, 0, 1)
 
-[node name="PixelPerfectWindow" parent="CanvasLayer" node_paths=PackedStringArray("source_viewport") instance=ExtResource("5_dsb46")]
-offset_left = 131.0
-offset_top = 484.0
-offset_right = 531.0
-offset_bottom = 684.0
-scale = Vector2(3, 3)
+[node name="PixelPerfectWindow" parent="CanvasLayer" node_paths=PackedStringArray("source_viewport", "resizer", "aligner") instance=ExtResource("5_dsb46")]
+offset_left = 91.0
+offset_top = 214.0
+offset_right = 731.0
+offset_bottom = 574.0
+scale = Vector2(2, 2)
 source_viewport = NodePath("../../SubViewport")
-native_resolution = Vector2i(400, 200)
+resizer = NodePath("../PixelPerfectIntegerResizer")
+aligner = NodePath("../PixelPerfectCenterer")
+use_transparency = false
 
 [node name="PixelPerfectPalette" parent="CanvasLayer" node_paths=PackedStringArray("window") instance=ExtResource("3_2rcqd")]
 window = NodePath("../PixelPerfectWindow")
@@ -39,7 +43,8 @@ palette_texture = ExtResource("5_oqkue")
 accuracy_scale = 256
 palette_id = "color"
 
-[node name="PixelPerfectResizer" parent="CanvasLayer" node_paths=PackedStringArray("window") instance=ExtResource("4_s1i3x")]
-window = NodePath("../PixelPerfectWindow")
-native_resolution = Vector2i(400, 200)
-is_centred = true
+[node name="PixelPerfectIntegerResizer" parent="CanvasLayer" instance=ExtResource("5_uofsi")]
+
+[node name="PixelPerfectCropResizer" parent="CanvasLayer" instance=ExtResource("6_uofsi")]
+
+[node name="PixelPerfectCenterer" parent="CanvasLayer" instance=ExtResource("7_jenrn")]

@@ -8,13 +8,22 @@ extends Control
 
 ## The viewport that contains the world to render for this window
 @export var source_viewport: SubViewport
+
+## The native resolution to be used
+@export var native_resolution: Vector2i = Vector2i(640, 360)
+
+## Resizer to use for this window
+@export var resizer: PixelPerfectResizer
+## Aligner to use for this window
+@export var aligner: PixelPerfectAligner
+
+@export_category("Details")
+
 ## Enables the clipped offset of the window's visuals to make camera motions appear smooth
 @export var use_subpixel_smoothing: bool = true
 ## Whether or not this window should have alpha
 @export var use_transparency: bool = true
 
-## The native resolution to be used IF a resizer is not involved
-@export var native_resolution: Vector2i = Vector2i(640, 360)
 var scale_factor: int = 1
 var margins: Vector2 = Vector2.ZERO
 
@@ -40,6 +49,7 @@ func _process(delta: float) -> void:
 	## SETTING VALUES
 	var final_native_resolution = native_resolution
 	var texture_rect_local_position = Vector2.ZERO
+	
 	if use_subpixel_smoothing:
 		## Add 1 pixel on each boundary to pad out
 		final_native_resolution += Vector2i(2, 2)
@@ -50,8 +60,15 @@ func _process(delta: float) -> void:
 	texture_rect.set_size(final_native_resolution)
 	texture_rect.set_position(texture_rect_local_position)
 	
+	if resizer != null:
+		scale_factor = resizer.compute_scale_factor(native_resolution)
+	else:
+		scale_factor = 1
 	scale = Vector2(scale_factor, scale_factor)
-	position = margins
+	if aligner != null:
+		position = aligner.compute_margins(native_resolution * scale_factor)
+	else:
+		position = Vector2.ZERO
 
 	if use_subpixel_smoothing:
 		update_subpixel_smoothing()

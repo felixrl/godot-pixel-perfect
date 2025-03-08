@@ -9,13 +9,16 @@ texture_filter = 1
 clip_contents = true
 layout_mode = 3
 anchors_preset = 0
-offset_right = 640.0
-offset_bottom = 360.0
+offset_left = 411.0
+offset_top = 394.0
+offset_right = 1051.0
+offset_bottom = 754.0
 mouse_filter = 1
 script = ExtResource("1_ogoyo")
 
 [node name="PixelPerfectWindowTextureRect" parent="." instance=ExtResource("2_w2wkx")]
 unique_name_in_owner = true
+texture_filter = 1
 layout_mode = 0
 offset_left = -1.0
 offset_top = -1.0

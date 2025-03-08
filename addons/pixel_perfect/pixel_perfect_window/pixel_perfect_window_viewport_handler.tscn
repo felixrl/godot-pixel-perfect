@@ -4,4 +4,3 @@
 
 [node name="PixelPerfectWindowViewportHandler" type="Node"]
 script = ExtResource("1_206pg")
-metadata/_custom_type_script = "uid://pnudm6jbdvg7"

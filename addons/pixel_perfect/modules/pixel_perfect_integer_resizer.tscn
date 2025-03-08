@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://ltlslb8vhgsy"]
+
+[ext_resource type="Script" uid="uid://deaxv5g3x1dca" path="res://addons/pixel_perfect/pixel_perfect_resizer/pixel_perfect_integer_resizer.gd" id="1_islc3"]
+
+[node name="PixelPerfectIntegerResizer" type="Node"]
+script = ExtResource("1_islc3")

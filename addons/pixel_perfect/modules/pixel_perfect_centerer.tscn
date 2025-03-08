@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://ddbswfwvl52l4"]
+
+[ext_resource type="Script" uid="uid://djf0dxv4s6dwj" path="res://addons/pixel_perfect/pixel_perfect_aligner/pixel_perfect_centerer.gd" id="1_y8w61"]
+
+[node name="PixelPerfectCenterer" type="Node"]
+script = ExtResource("1_y8w61")
