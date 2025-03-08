@@ -67,10 +67,10 @@ void fragment() {
 	ivec2 lookup_coords = calc_lookup_coords(scaled_texture_color);
 
 	vec4 selected_color = get_lookup_color(lookup_coords);
-	
+
 	if (use_transparency) {
 		// TODO: Transparency scale
-		
+
 		COLOR = vec4(selected_color.rgb, COLOR.a);
 	} else {
 		COLOR = selected_color; // OUTPUT selected colour

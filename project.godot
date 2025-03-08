@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Pixel Perfect"
-run/main_scene="res://tests/game.tscn"
+run/main_scene="uid://b8ptpdrkdbage"
 config/features=PackedStringArray("4.4", "Mobile")
 boot_splash/image="res://tests/man.png"
 config/icon="res://tests/man.png"

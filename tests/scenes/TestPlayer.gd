@@ -1,3 +1,4 @@
+class_name TestPlayer
 extends Sprite2D
 
 const SPEED = 200.0
@@ -5,6 +6,11 @@ const ACCELERATION = 10.0
 
 var velocity := Vector2.ZERO
 var input_direction := Vector2.ZERO
+
+@onready var my_position := position
+@onready var my_global_position := global_position
+
+var next_position
 
 func _process(delta: float) -> void:
 	input_direction = Vector2.ZERO
@@ -18,6 +24,15 @@ func _process(delta: float) -> void:
 		input_direction += Vector2.RIGHT
 
 func _physics_process(delta: float) -> void:
-	velocity = velocity.lerp(input_direction * SPEED, delta * ACCELERATION)
+	velocity = MathUtil.decay(velocity, input_direction.normalized() * SPEED, ACCELERATION, delta)
 	
-	position += velocity * delta
+	my_global_position = get_next_global_position(delta)
+	global_position = my_global_position
+	
+	#print(velocity)
+
+func get_instantaneous_velocity(delta: float) -> Vector2:
+	return velocity * delta
+
+func get_next_global_position(delta: float) -> Vector2:
+	return my_global_position + velocity * delta
