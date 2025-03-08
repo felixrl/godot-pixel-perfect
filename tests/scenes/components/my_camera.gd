@@ -3,7 +3,7 @@ extends SubpixelCamera
 
 @export var follow_node: TestPlayer
 
-const LERP_RATE = 10.0
+const LERP_RATE = 22.0
 var target_position: Vector2 = Vector2.ZERO
 
 func _process(delta: float) -> void:
@@ -48,19 +48,31 @@ func _physics_process(delta: float) -> void:
 	decay_toward_target_with_constant_velocity_fix(delta)
 	
 	## BUG: An issue with "transitioning" in slowing down? Where it jitters in the slow down process...
+	## - Can fix by raising min target velocity, at cost of smooth slow speed
+	## BUG: Issue like "magnetic latching" after slowing object down to zero...
 	## BUG: What exact tuned values?
-	## BUG: What about moving "back"/slowing down? Only do this when moving in the SAME GENERAL DIRECTION?
 	## BUG: What about acceleration?
 
 const MIN_TARGET_VELOCITY = 0.5
 const MAX_LIMIT_FOR_CONSTANT_VELOCITY = 1.0
+
+const MAINTAIN_INCREASE_AMOUNT = 3.0
+const MAINTAIN_THRESHOLD = 0.2
+
+var use_maintain_x := 0.0 : set = set_maintain_x
+func set_maintain_x(value) -> void:
+	use_maintain_x = clamp(value, 0.0, 1.0)
+var use_maintain_y := 0.0 : set = set_maintain_y
+func set_maintain_y(value) -> void:
+	use_maintain_y = clamp(value, 0.0, 1.0)
+
 func decay_toward_target_with_constant_velocity_fix(delta: float) -> void:
 	## Decay!
 	var next_smooth_global_position = MathUtil.decay(smooth_global_position, target_position, LERP_RATE, delta)
 	
 	## Get difference from current as INSTANTANEOUS VELOCITY
 	var instant_velocity: Vector2 = next_smooth_global_position - smooth_global_position
-	## Retrieve INSTANTENOUS VELOCITY from target
+	## Retrieve INSTANTANEOUS VELOCITY from target
 	var target_instant_velocity: Vector2 = follow_node.get_instantaneous_velocity(delta)
 	
 	## The current PIXEL POSITION DIFFERENCE
@@ -75,10 +87,21 @@ func decay_toward_target_with_constant_velocity_fix(delta: float) -> void:
 
 	var final_position = next_smooth_global_position
 	## BEHAVIOUR FOR X
-	if abs(target_instant_velocity.x) > MIN_TARGET_VELOCITY and velocity_difference < MAX_LIMIT_FOR_CONSTANT_VELOCITY and sign(instant_velocity.x) == sign(target_instant_velocity.x):
-		print("here")
-		final_position = Vector2(next_position_to_maintain.x, final_position.y)
+	if round(target_instant_velocity.x) != 0 and velocity_difference < MAX_LIMIT_FOR_CONSTANT_VELOCITY and sign(instant_velocity.x) == sign(target_instant_velocity.x):
+		use_maintain_x = 1.0
+	else:
+		use_maintain_x = 0.0
 	## BEHAVIOUR FOR Y
-	if abs(target_instant_velocity.y) > MIN_TARGET_VELOCITY and velocity_difference < MAX_LIMIT_FOR_CONSTANT_VELOCITY and sign(instant_velocity.y) == sign(target_instant_velocity.y):
+	if round(target_instant_velocity.y) != 0 and velocity_difference < MAX_LIMIT_FOR_CONSTANT_VELOCITY and sign(instant_velocity.y) == sign(target_instant_velocity.y):
+		use_maintain_y = 1.0
+	else:
+		use_maintain_y = 0.0
+	
+	if use_maintain_x > MAINTAIN_THRESHOLD:
+		final_position = Vector2(next_position_to_maintain.x, final_position.y)
+	if use_maintain_y > MAINTAIN_THRESHOLD:
 		final_position = Vector2(final_position.x, next_position_to_maintain.y)
+	
 	set_smooth_global_position(final_position)
+	
+	## IDEA: INTERPOLATE BETWEEN THIS BEHAVIOUR ON BOTH X AND Y AXIS, TO PREVENT SHARP CUT-OFF?

@@ -1,7 +1,7 @@
 class_name TestPlayer
 extends Sprite2D
 
-const SPEED = 200.0
+const SPEED = 175.0
 const ACCELERATION = 10.0
 
 var velocity := Vector2.ZERO
