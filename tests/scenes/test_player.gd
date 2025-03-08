@@ -2,7 +2,7 @@ class_name TestPlayer
 extends Sprite2D
 
 const SPEED = 250.0
-const ACCELERATION = 10.0
+const ACCELERATION = 1000.0
 
 var velocity := Vector2.ZERO
 var input_direction := Vector2.ZERO
@@ -30,6 +30,8 @@ func _physics_process(delta: float) -> void:
 	my_global_position = get_next_global_position(delta)
 	global_position = my_global_position
 
+## NOTE: INSTANTENOUS VELOCITY IS THE WRONG TERM
+## Should be "delta position"
 func get_instantaneous_velocity(delta: float) -> Vector2:
 	return velocity * delta
 func get_next_global_position(delta: float) -> Vector2:

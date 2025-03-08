@@ -1,18 +1,26 @@
-[gd_scene load_steps=2 format=3 uid="uid://lfwkvoblx353"]
+[gd_scene load_steps=4 format=3 uid="uid://lfwkvoblx353"]
 
 [ext_resource type="Script" uid="uid://d2ubacr6klbrf" path="res://addons/pixel_perfect/pixel_perfect_window/pixel_perfect_window.gd" id="1_ogoyo"]
+[ext_resource type="PackedScene" uid="uid://gld11ajpt18g" path="res://addons/pixel_perfect/pixel_perfect_window/pixel_perfect_window_texture_rect.tscn" id="2_w2wkx"]
+[ext_resource type="PackedScene" uid="uid://c4wihrjvt34bh" path="res://addons/pixel_perfect/pixel_perfect_window/pixel_perfect_window_viewport_handler.tscn" id="2_yqnmy"]
 
 [node name="PixelPerfectWindow" type="Control"]
+texture_filter = 1
+clip_contents = true
 layout_mode = 3
 anchors_preset = 0
+offset_right = 640.0
+offset_bottom = 360.0
+mouse_filter = 1
+script = ExtResource("1_ogoyo")
+
+[node name="PixelPerfectWindowTextureRect" parent="." instance=ExtResource("2_w2wkx")]
+unique_name_in_owner = true
+layout_mode = 0
 offset_left = -1.0
 offset_top = -1.0
 offset_right = 641.0
 offset_bottom = 361.0
-script = ExtResource("1_ogoyo")
 
-[node name="TextureRect" type="TextureRect" parent="."]
+[node name="PixelPerfectWindowViewportHandler" parent="." instance=ExtResource("2_yqnmy")]
 unique_name_in_owner = true
-layout_mode = 0
-offset_right = 642.0
-offset_bottom = 362.0

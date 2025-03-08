@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://gld11ajpt18g"]
+
+[ext_resource type="Script" uid="uid://cl53r3k0bi6kd" path="res://addons/pixel_perfect/pixel_perfect_window/pixel_perfect_window_texture_rect.gd" id="1_phg0n"]
+
+[node name="PixelPerfectWindowTextureRect" type="TextureRect"]
+texture_filter = 1
+script = ExtResource("1_phg0n")
+metadata/_custom_type_script = "uid://cl53r3k0bi6kd"

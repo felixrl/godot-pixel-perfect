@@ -6,14 +6,10 @@ extends SubpixelCamera
 const LERP_RATE = 5.0
 var target_position: Vector2 = Vector2.ZERO
 
-func _process(delta: float) -> void:
-	if Input.is_action_just_pressed("ui_accept"):
-		target_position = Vector2(RandomNumberGenerator.new().randf_range(-32, 32), RandomNumberGenerator.new().randf_range(-32, 32))
-
 ## Updating position is most ideal in physics process?
 func _physics_process(delta: float) -> void:
 	if follow_node != null:
-		target_position = follow_node.global_position
+		target_position = follow_node.my_global_position
 	
 	## THE PRINCIPLE OF FIXING STUTTER AT EQUAL VELOCITY
 	## ---
@@ -45,6 +41,10 @@ func _physics_process(delta: float) -> void:
 	## (This is solved by algebra)
 	## OR consider: start with the next position of the target, 
 	## and maintain the same pixel offset (in the same direction).
+	
+	## BUG: This only works if the CAMERA UPDATES FIRST
+	## Essentially, we have the previous frame's data, and then we update this frame's data
+	## The solution would be to store the previous frame's data and then update using that?
 	decay_toward_target_with_constant_velocity_fix(delta)
 	
 	## BUG: An issue with "transitioning" in slowing down? Where it jitters in the slow down process...
@@ -57,9 +57,8 @@ func _physics_process(delta: float) -> void:
 	## This jitter only happens at the initial, AND only happens when moving in one direction (noticed right)
 	## AND only occurs when the speed of players has specific values.
 	
-	
-	
-	
+	## Generally, CAMERA must update after PLAYER to avoid 1 frame delay and genuine lock
+	#global_position = target_position
 	
 	## SOLVING THE ACCELERATION PROBLEM
 	## THESE ONLY APPLY WHEN THE CAMERA AND THE TARGET HAVE THE SAME DIRECTIONAL VELOCITY..?
@@ -71,7 +70,7 @@ func _physics_process(delta: float) -> void:
 	## THE PIXEL DISTANCE ON SCREEN *NEVER* INCREASES. IT CAN ONLY STAY THE SAME OR DECREASE.
 	
 	## Works but:
-	## BUG: A way to predict and evenly space?
+	## BUG: A way to predict and evenly space out increments of movement?
 
 const MIN_TARGET_VELOCITY = 0.5
 const MAX_LIMIT_FOR_CONSTANT_VELOCITY = 0.15

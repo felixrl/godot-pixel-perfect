@@ -2,56 +2,79 @@
 class_name PixelPerfectWindow
 extends Control
 
-## A node that encapsulates a texture rect that renders a viewport in pixel perfect
-## with clipping
+## NODE that SETS UP and CONFIGURES necessary elements for a PIXEL PERFECT (SUB-VIEWPORT) WINDOW
 
 ## TODO: DEALING WITH MOUSE INPUT!
-## NOTE: Transparency toggle with enforcement??
-## NOTE: Save data to this object and then load to children to prevent data loss
 
+## The viewport that contains the world to render for this window
 @export var source_viewport: SubViewport
+## Enables the clipped offset of the window's visuals to make camera motions appear smooth
+@export var use_subpixel_smoothing: bool = true
+## Whether or not this window should have alpha
+@export var use_transparency: bool = true
+
+## The native resolution to be used IF a resizer is not involved
 @export var native_resolution: Vector2i = Vector2i(640, 360)
 var scale_factor: int = 1
 var margins: Vector2 = Vector2.ZERO
 
-@onready var texture_rect: TextureRect = %TextureRect
+@onready var texture_rect: PixelPerfectWindowTextureRect = %PixelPerfectWindowTextureRect
+@onready var viewport_handler: PixelPerfectWindowViewportHandler = %PixelPerfectWindowViewportHandler
 
 func _ready() -> void:
-	if has_viewport():
-		texture_rect.set_texture(source_viewport.get_texture())
-	texture_rect.texture_filter = TextureFilter.TEXTURE_FILTER_NEAREST
+	init_config_details()
+	
+	viewport_handler.viewport = source_viewport
+	if viewport_handler.has_viewport():
+		texture_rect.set_texture(viewport_handler.get_viewport_texture())
 
-func _process(delta: float) -> void:
+func init_config_details() -> void:
 	size = native_resolution
 	clip_contents = true
+	texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	mouse_filter = Control.MOUSE_FILTER_PASS
+
+func _process(delta: float) -> void:
+	init_config_details()
 	
-	if source_viewport != null:
-		source_viewport.size = native_resolution + Vector2i(2, 2)
-	texture_rect.size = native_resolution + Vector2i(2, 2)
+	## SETTING VALUES
+	var final_native_resolution = native_resolution
+	var texture_rect_local_position = Vector2.ZERO
+	if use_subpixel_smoothing:
+		## Add 1 pixel on each boundary to pad out
+		final_native_resolution += Vector2i(2, 2)
+		## Shift offset by 1 pixel so that it remains centred
+		texture_rect_local_position += Vector2(-1, -1)
+	
+	viewport_handler.set_viewport_resolution(final_native_resolution)
+	texture_rect.set_size(final_native_resolution)
+	texture_rect.set_position(texture_rect_local_position)
 	
 	scale = Vector2(scale_factor, scale_factor)
 	position = margins
-	texture_rect.position = Vector2(-1, -1)
-	
-	if has_subpixel_camera():
-		var camera: SubpixelCamera = get_viewport_camera_2d()
-		get_shader_material().set_shader_parameter("camera_offset", camera.subpixel_offset)
 
-## FROM VIEWPORT...
+	if use_subpixel_smoothing:
+		update_subpixel_smoothing()
 
-func has_viewport() -> bool:
-	return source_viewport != null
-func has_camera() -> bool:
-	return has_viewport() && source_viewport.get_camera_2d() != null
-func has_subpixel_camera() -> bool:
-	return has_camera() && source_viewport.get_camera_2d() is SubpixelCamera
+func update_subpixel_smoothing():
+	if viewport_handler.has_subpixel_camera():
+		var camera: SubpixelCamera = viewport_handler.get_viewport_camera_2d() as SubpixelCamera
+		texture_rect.set_subpixel_offset(camera.subpixel_offset)
 
-func get_viewport_camera_2d() -> Camera2D:
-	if has_camera():
-		return source_viewport.get_camera_2d()
-	return null
+const PALETTE_SHADER: Shader = preload("res://addons/pixel_perfect/pixel_perfect_palette/shaders/palette_lookup.gdshader")
 
-func get_shader_material() -> Material:
-	if (texture_rect.get_material() == null):
-		texture_rect.set_material(ShaderMaterial.new())
-	return texture_rect.get_material()
+## Assign the palette LUT and relevant config to the texture rect's shader
+func set_palette_lut(lut: ImageTexture) -> void:
+	var accuracy_scale = lut.get_height()
+	texture_rect.get_shader_material().set_shader(PALETTE_SHADER)
+	texture_rect.get_shader_material().set_shader_parameter("lookup_texture", lut)
+	texture_rect.get_shader_material().set_shader_parameter("texture_size", Vector2(lut.get_width(), lut.get_height()))
+	texture_rect.get_shader_material().set_shader_parameter("accuracy_scale", accuracy_scale)
+	texture_rect.get_shader_material().set_shader_parameter("use_transparency", use_transparency)
+
+#region MOUSE INPUT
+
+func _unhandled_input(event: InputEvent) -> void:
+	PixelPerfect.get_mouse_screen_position()
+
+#endregion

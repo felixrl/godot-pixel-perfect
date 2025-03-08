@@ -5,6 +5,14 @@ extends Node
 ## A node that encapsulates the necessary functionality for enforcing
 ## palettes on viewport textures
 
+## TODO: Split bake and regular functionality
+## TODO: Non-LUT systems
+## TODO: Make LUT system work for build?
+## BUG: LUT system DOES NOT work (well, at least) for anything beyond 128 accuracy
+## LIKELY BECAUSE TEXTURE IS TOO BIG
+## - Don't use LUT, or
+## - Split between multiple LUTs
+
 enum DistanceFunction {
 	## Simple distance squared directly on RGB
 	EUCLIDEAN,
@@ -14,9 +22,6 @@ enum DistanceFunction {
 
 ## Window to which the shader and palette will be applied
 @export var window: PixelPerfectWindow
-
-## Allow alpha copying to destination to allow transparent layers
-@export var use_transparency: bool = true
 
 @export_category("Palette Generation")
 ## Texture used to dynamically produce a list of unique colours for the palette
@@ -45,11 +50,12 @@ func _set_bake_palette(value: bool):
 		print("---")
 	bake_palette = false
 
-var palette_shader: Shader = preload("res://addons/pixel_perfect/pixel_perfect_palette/shaders/palette_lookup.gdshader")
-
 var palette
 var lookup_texture
 var previous_distance_function
+
+func _ready() -> void:
+	swap_to(palette_id)
 
 ## Bakes the palette from palette_texture into palette_id (on the registry)
 ## Returns 0 on success and any other number on error
@@ -103,12 +109,4 @@ func swap_to(new_palette_id: String) -> void:
 
 ## Update lookup texture with metadata and shader for every referenced layer
 func _assign_lookup_texture_to_windows():
-	_assign_lookup_texture(window.get_shader_material(), lookup_texture, accuracy_scale)
-
-## Assign the lookup texture shader and corresponding metadata to a palette material
-func _assign_lookup_texture(shader_material: ShaderMaterial, lookup_texture: Texture2D, accuracy_scale: int):
-	shader_material.set_shader(palette_shader)
-	shader_material.set_shader_parameter("lookup_texture", lookup_texture)
-	shader_material.set_shader_parameter("texture_size", Vector2(lookup_texture.get_width(), lookup_texture.get_height()))
-	shader_material.set_shader_parameter("accuracy_scale", accuracy_scale)
-	shader_material.set_shader_parameter("use_transparency", use_transparency)
+	window.set_palette_lut(lookup_texture)

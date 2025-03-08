@@ -82,10 +82,25 @@ func get_world_delta() -> Vector2:
 
 ## UTILITY FUNCTIONS
 
-## Convert a screen coordinate to a world space pixel coordinate
-## TODO: Write out math logic...
-#func _screen_to_world_space(screen_position) -> Vector2:
-	#var new_position = screen_position - pixel_perfect.margins - Vector2(pixel_perfect.native_pixel_res.x, pixel_perfect.native_pixel_res.y) / 2 * pixel_perfect.scale_factor
-	#var world_position = Vector2(clamp(new_position.x / pixel_perfect.scale_factor, -pixel_perfect.native_pixel_res.x / 2.0, pixel_perfect.native_pixel_res.x / 2.0), 
-			#clamp(new_position.y / pixel_perfect.scale_factor, -pixel_perfect.native_pixel_res.y / 2.0, pixel_perfect.native_pixel_res.y / 2.0))
-	#return world_position
+func screen_to_world_space(screen_position: Vector2, resizer: PixelPerfectResizer) -> Vector2:
+	var relative_to_centre_position = compute_screen_position_relative_to_centre(screen_position, resizer)
+	var unclamped_world_position = screen_to_unclamped_world_coordinate(relative_to_centre_position, resizer)
+	var clamped_world_position = clamp_world_coordinate(unclamped_world_position, resizer)
+	return clamped_world_position
+
+## CLAMP an UNCLAMPED WORLD COORDINATE to be within the "viewport" space.
+## Assumes that UNCLAMPED WORLD COORDINATE is such that (0,0) is the CENTRE of the viewport space
+func clamp_world_coordinate(unclamped_world_coordinate: Vector2, resizer: PixelPerfectResizer) -> Vector2:
+	var half_native_resolution = resizer.native_resolution / 2.0
+	return unclamped_world_coordinate.clamp(-half_native_resolution, half_native_resolution)
+
+## Convert a SCREEN COORDINATE to WORLD COORDINATE space, BUT NOT LIMITED TO THE VIEWPORT SIZE
+func screen_to_unclamped_world_coordinate(screen_position: Vector2, resizer: PixelPerfectResizer) -> Vector2:
+	return screen_position / resizer.scale_factor
+
+## Compute a SCREEN POSITION where (0,0) is the CENTRE of the pixel subviewport...
+func compute_screen_position_relative_to_centre(screen_position: Vector2, resizer: PixelPerfectResizer) -> Vector2:
+	var margins = resizer.margins
+	var half_of_upsized_resolution = resizer.get_upscaled_resolution() / 2.0
+	var relative_to_centre_position = screen_position - margins - half_of_upsized_resolution
+	return relative_to_centre_position

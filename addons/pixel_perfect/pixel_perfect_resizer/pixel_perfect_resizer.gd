@@ -18,6 +18,9 @@ var scale_factor: int = 1
 ## Margins from top-left corner, specifying the total XY offset
 var margins: Vector2
 
+func get_upscaled_resolution() -> Vector2i:
+	return native_resolution * scale_factor
+
 func _ready() -> void:
 	get_tree().get_root().connect("size_changed", resize)
 	resize()
