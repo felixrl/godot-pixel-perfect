@@ -28,11 +28,8 @@ func _physics_process(delta: float) -> void:
 	
 	my_global_position = get_next_global_position(delta)
 	global_position = my_global_position
-	
-	#print(velocity)
 
 func get_instantaneous_velocity(delta: float) -> Vector2:
 	return velocity * delta
-
 func get_next_global_position(delta: float) -> Vector2:
-	return my_global_position + velocity * delta
+	return my_global_position + get_instantaneous_velocity(delta)

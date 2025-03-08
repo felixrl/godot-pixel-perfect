@@ -15,27 +15,6 @@ func _physics_process(delta: float) -> void:
 	if follow_node != null:
 		target_position = follow_node.global_position
 	
-	#print(round(smooth_global_position) - round(smooth_global_position.lerp(target_position, delta * 12.0)))
-	
-	var next_smooth_global_position = MathUtil.decay(smooth_global_position, target_position, 24.0, delta)
-	#print(next_smooth_global_position)
-	#print("B" + str(smooth_global_position))
-	#print("C" + str(follow_node.get_instantaneous_velocity(delta)))
-	
-	var my_velocity: Vector2 = next_smooth_global_position - smooth_global_position
-	
-	var current_difference: Vector2 = get_rounded_global_position() - round(follow_node.my_global_position) 
-	var next_difference: Vector2 = round(next_smooth_global_position) - round(follow_node.get_next_global_position(delta))
-	
-	#print(current_difference.is_equal_approx(next_difference))
-	
-	var difference_equal := current_difference.is_equal_approx(next_difference)
-	var velocity_difference = abs(my_velocity.length() - follow_node.get_instantaneous_velocity(delta).length())
-	
-	print(velocity_difference)
-	var MIN_VELOCITY := 0.5
-	var CONSTANT_VELOCITY_CRITERIA := 1.0
-	
 	## THE PRINCIPLE OF FIXING STUTTER AT EQUAL VELOCITY
 	## ---
 	## When the target is (absolutely) stationary 
@@ -66,24 +45,40 @@ func _physics_process(delta: float) -> void:
 	## (This is solved by algebra)
 	## OR consider: start with the next position of the target, 
 	## and maintain the same pixel offset (in the same direction).
+	decay_toward_target_with_constant_velocity_fix(delta)
 	
 	## BUG: An issue with "transitioning" in slowing down? Where it jitters in the slow down process...
 	## BUG: What exact tuned values?
 	## BUG: What about moving "back"/slowing down? Only do this when moving in the SAME GENERAL DIRECTION?
-	
-	#print(follow_node.get_instantaneous_velocity(delta).is_zero_approx())
-	
-	## TOOD: Split into individual x and y fields?
-	
-	## If the camera should be moving at constant velocity relative to the moving target...
-	if follow_node.get_instantaneous_velocity(delta).length() > 0.5 and velocity_difference < CONSTANT_VELOCITY_CRITERIA:
-		## MAINTAIN DIFFERENCE
-		set_smooth_global_position(current_difference + round(follow_node.get_next_global_position(delta)))
-	else: ## Can just accelerate towards...
-		set_smooth_global_position(next_smooth_global_position)
+	## BUG: What about acceleration?
 
-	#set_smooth_global_position(next_smooth_global_position)
+const MIN_TARGET_VELOCITY = 0.5
+const MAX_LIMIT_FOR_CONSTANT_VELOCITY = 1.0
+func decay_toward_target_with_constant_velocity_fix(delta: float) -> void:
+	## Decay!
+	var next_smooth_global_position = MathUtil.decay(smooth_global_position, target_position, LERP_RATE, delta)
+	
+	## Get difference from current as INSTANTANEOUS VELOCITY
+	var instant_velocity: Vector2 = next_smooth_global_position - smooth_global_position
+	## Retrieve INSTANTENOUS VELOCITY from target
+	var target_instant_velocity: Vector2 = follow_node.get_instantaneous_velocity(delta)
+	
+	## The current PIXEL POSITION DIFFERENCE
+	var current_difference: Vector2 = get_rounded_global_position() - round(follow_node.my_global_position) 
+	## The next PIXEL POSITION DIFFERENCE
+	var next_difference: Vector2 = round(next_smooth_global_position) - round(follow_node.get_next_global_position(delta))
 
-	# BUG: Doesn't work for ACCELERATION time
-	# HOW TO TEST for CONSTANT VELOCITY???
-	#smooth_global_position = target_position
+	var velocity_difference = abs(instant_velocity.length() - target_instant_velocity.length())
+	#var velocity_difference = instant_velocity - target_instant_velocity
+
+	var next_position_to_maintain = current_difference + round(follow_node.get_next_global_position(delta))
+
+	var final_position = next_smooth_global_position
+	## BEHAVIOUR FOR X
+	if abs(target_instant_velocity.x) > MIN_TARGET_VELOCITY and velocity_difference < MAX_LIMIT_FOR_CONSTANT_VELOCITY and sign(instant_velocity.x) == sign(target_instant_velocity.x):
+		print("here")
+		final_position = Vector2(next_position_to_maintain.x, final_position.y)
+	## BEHAVIOUR FOR Y
+	if abs(target_instant_velocity.y) > MIN_TARGET_VELOCITY and velocity_difference < MAX_LIMIT_FOR_CONSTANT_VELOCITY and sign(instant_velocity.y) == sign(target_instant_velocity.y):
+		final_position = Vector2(final_position.x, next_position_to_maintain.y)
+	set_smooth_global_position(final_position)
