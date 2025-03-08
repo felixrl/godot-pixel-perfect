@@ -3,7 +3,7 @@ extends SubpixelCamera
 
 @export var follow_node: TestPlayer
 
-const LERP_RATE = 22.0
+const LERP_RATE = 5.0
 var target_position: Vector2 = Vector2.ZERO
 
 func _process(delta: float) -> void:
@@ -52,9 +52,29 @@ func _physics_process(delta: float) -> void:
 	## BUG: Issue like "magnetic latching" after slowing object down to zero...
 	## BUG: What exact tuned values?
 	## BUG: What about acceleration?
+	
+	## BUG: Occasional discrepancy where there is jitter... Initial values are off?
+	## This jitter only happens at the initial, AND only happens when moving in one direction (noticed right)
+	## AND only occurs when the speed of players has specific values.
+	
+	
+	
+	
+	
+	## SOLVING THE ACCELERATION PROBLEM
+	## THESE ONLY APPLY WHEN THE CAMERA AND THE TARGET HAVE THE SAME DIRECTIONAL VELOCITY..?
+	## What about opposite cases?
+	
+	## THEORY: IN AN ACCELERATION (THE VELOCITY OF THE TARGET IS GREATER THAN THE VELOCITY OF THE CAMERA)
+	## THE PIXEL DISTANCE ON SCREEN *NEVER* DECREASES. IT CAN ONLY STAY THE SAME OR INCREASE.
+	## IN A DECELERATION (THE VELOCITY OF THE TARGET IS LESS THAN THE VELOCITY OF THE CAMERA)
+	## THE PIXEL DISTANCE ON SCREEN *NEVER* INCREASES. IT CAN ONLY STAY THE SAME OR DECREASE.
+	
+	## Works but:
+	## BUG: A way to predict and evenly space?
 
 const MIN_TARGET_VELOCITY = 0.5
-const MAX_LIMIT_FOR_CONSTANT_VELOCITY = 1.0
+const MAX_LIMIT_FOR_CONSTANT_VELOCITY = 0.15
 
 const MAINTAIN_INCREASE_AMOUNT = 3.0
 const MAINTAIN_THRESHOLD = 0.2
@@ -67,12 +87,14 @@ func set_maintain_y(value) -> void:
 	use_maintain_y = clamp(value, 0.0, 1.0)
 
 func decay_toward_target_with_constant_velocity_fix(delta: float) -> void:
-	## Decay!
+	## THIS IS THE GENERIC SMOOTHING BEHAVIOUR...
+	## "Where do I WANT to go next?"
 	var next_smooth_global_position = MathUtil.decay(smooth_global_position, target_position, LERP_RATE, delta)
 	
-	## Get difference from current as INSTANTANEOUS VELOCITY
+	## Compute difference (final - initial) from now to then to see the instantenous "change"
 	var instant_velocity: Vector2 = next_smooth_global_position - smooth_global_position
 	## Retrieve INSTANTANEOUS VELOCITY from target
+	## Get the same instantenous change from the target...
 	var target_instant_velocity: Vector2 = follow_node.get_instantaneous_velocity(delta)
 	
 	## The current PIXEL POSITION DIFFERENCE
@@ -83,25 +105,66 @@ func decay_toward_target_with_constant_velocity_fix(delta: float) -> void:
 	var velocity_difference = abs(instant_velocity.length() - target_instant_velocity.length())
 	#var velocity_difference = instant_velocity - target_instant_velocity
 
-	var next_position_to_maintain = current_difference + round(follow_node.get_next_global_position(delta))
-
-	var final_position = next_smooth_global_position
-	## BEHAVIOUR FOR X
-	if round(target_instant_velocity.x) != 0 and velocity_difference < MAX_LIMIT_FOR_CONSTANT_VELOCITY and sign(instant_velocity.x) == sign(target_instant_velocity.x):
-		use_maintain_x = 1.0
-	else:
-		use_maintain_x = 0.0
-	## BEHAVIOUR FOR Y
-	if round(target_instant_velocity.y) != 0 and velocity_difference < MAX_LIMIT_FOR_CONSTANT_VELOCITY and sign(instant_velocity.y) == sign(target_instant_velocity.y):
-		use_maintain_y = 1.0
-	else:
-		use_maintain_y = 0.0
+	var next_position_to_maintain_difference = current_difference + round(follow_node.get_next_global_position(delta))
 	
-	if use_maintain_x > MAINTAIN_THRESHOLD:
-		final_position = Vector2(next_position_to_maintain.x, final_position.y)
-	if use_maintain_y > MAINTAIN_THRESHOLD:
-		final_position = Vector2(final_position.x, next_position_to_maintain.y)
+	var final_position = next_smooth_global_position
+	
+	var is_constant_case_x = false
+	var is_constant_case_y = false
+	## BEHAVIOUR FOR X
+	if round(target_instant_velocity.x) != 0: ## If the target is NOT stationary...
+		if sign(instant_velocity.x) == sign(target_instant_velocity.x): ## AND we're moving in the same direction...
+			## CONSTANT (Screen location does not change)
+			## [SOLUTION TO THE CONSTANT VELOCITY PROBLEM]
+			if is_constant_velocity(velocity_difference):
+				## So we simply enforce the "constant pixel difference" rule.
+				final_position = Vector2(next_position_to_maintain_difference.x, final_position.y)
+				is_constant_case_x = true
+			## ACCELERATION AWAY (Screen location is diverging)
+			## [SOLUTION TO THE ACCELERATION PROBLEM]
+			elif abs(target_instant_velocity.x) > abs(instant_velocity.x):
+				## We want to have a floor boundary for the next possible pixel difference
+				if abs(next_difference.x) < abs(current_difference.x):
+					final_position = Vector2(next_position_to_maintain_difference.x, final_position.y)
+			## DECELERATION TOWARD (Screen location is converging)
+			elif abs(target_instant_velocity.x) < abs(instant_velocity.x):
+				## We want to have a cap for the next possible pixel difference
+				if abs(next_difference.x) > abs(current_difference.x):
+					final_position = Vector2(next_position_to_maintain_difference.x, final_position.y)
+	
+	## BEHAVIOUR FOR Y
+	if round(target_instant_velocity.y) != 0: ## If the target is NOT stationary...
+		if sign(instant_velocity.y) == sign(target_instant_velocity.y): ## AND we're moving in the same direction...
+			## CONSTANT (Screen location does not change)
+			## [SOLUTION TO THE CONSTANT VELOCITY PROBLEM]
+			if is_constant_velocity(velocity_difference):
+				## So we simply enforce the "constant pixel difference" rule.
+				final_position = Vector2(final_position.x, next_position_to_maintain_difference.y)
+				is_constant_case_y = true
+			## ACCELERATION AWAY (Screen location is diverging)
+			## [SOLUTION TO THE ACCELERATION PROBLEM]
+			elif abs(target_instant_velocity.y) > abs(instant_velocity.y):
+				## We want to have a floor boundary for the next possible pixel difference
+				if abs(next_difference.y) < abs(current_difference.y):
+					final_position = Vector2(final_position.x, next_position_to_maintain_difference.y)
+			## DECELERATION TOWARD (Screen location is converging)
+			elif abs(target_instant_velocity.y) < abs(instant_velocity.y):
+				## We want to have a cap for the next possible pixel difference
+				if abs(next_difference.y) > abs(current_difference.y):
+					final_position = Vector2(final_position.x, next_position_to_maintain_difference.y)
+	
+	var previous_subpixel = subpixel_offset
 	
 	set_smooth_global_position(final_position)
 	
-	## IDEA: INTERPOLATE BETWEEN THIS BEHAVIOUR ON BOTH X AND Y AXIS, TO PREVENT SHARP CUT-OFF?
+	## BUG: Why does subpixel have to be uniform..? To avoid diagonal jitter...
+	if is_constant_case_x: ## BUG: Fixing subpixel jitters on constant velo...
+		## This has to be the last thing called, so that it overrides! (OR make a subpixel override feature)
+		#subpixel_offset = Vector2(previous_subpixel.x, subpixel_offset.y)
+		subpixel_offset = previous_subpixel
+	if is_constant_case_y:
+		#subpixel_offset = Vector2(subpixel_offset.x, previous_subpixel.y)
+		subpixel_offset = previous_subpixel
+
+func is_constant_velocity(velocity_length_difference: float) -> bool:
+	return velocity_length_difference < MAX_LIMIT_FOR_CONSTANT_VELOCITY
