@@ -1,0 +1,17 @@
+[gd_scene load_steps=4 format=3 uid="uid://grjveqmeuql3"]
+
+[ext_resource type="Script" uid="uid://ceaajm3gs6tjs" path="res://addons/pixel_perfect/pixel_perfect_window/pixel_perfect_window_input_handler.gd" id="1_fk17l"]
+[ext_resource type="PackedScene" uid="uid://c6hisput72ln8" path="res://addons/pixel_perfect/pixel_perfect_transformations/pixel_perfect_transformer.tscn" id="2_jl8yf"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_fk17l"]
+size = Vector2(640, 360)
+
+[node name="PixelPerfectWindowInputHandler" type="Area2D"]
+script = ExtResource("1_fk17l")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+unique_name_in_owner = true
+shape = SubResource("RectangleShape2D_fk17l")
+
+[node name="PixelPerfectTransformer" parent="." instance=ExtResource("2_jl8yf")]
+unique_name_in_owner = true

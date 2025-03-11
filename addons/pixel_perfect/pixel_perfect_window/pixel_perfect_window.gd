@@ -29,6 +29,7 @@ var margins: Vector2 = Vector2.ZERO
 
 @onready var texture_rect: PixelPerfectWindowTextureRect = %PixelPerfectWindowTextureRect
 @onready var viewport_handler: PixelPerfectWindowViewportHandler = %PixelPerfectWindowViewportHandler
+@onready var input_handler: PixelPerfectWindowInputHandler = %PixelPerfectWindowInputHandler
 
 func _ready() -> void:
 	init_config_details()
@@ -43,12 +44,21 @@ func init_config_details() -> void:
 	texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	mouse_filter = Control.MOUSE_FILTER_PASS
 
+func get_scale_factor() -> float:
+	return resizer.compute_scale_factor(native_resolution)
+func get_margins() -> Vector2:
+	return aligner.compute_margins(get_upscaled_resolution())
+func get_upscaled_resolution() -> Vector2:
+	return native_resolution * get_scale_factor()
+
 func _process(delta: float) -> void:
 	init_config_details()
 	
 	## SETTING VALUES
 	var final_native_resolution = native_resolution
 	var texture_rect_local_position = Vector2.ZERO
+	
+	input_handler.set_collision_rect(final_native_resolution)
 	
 	if use_subpixel_smoothing:
 		## Add 1 pixel on each boundary to pad out
@@ -90,8 +100,5 @@ func set_palette_lut(lut: ImageTexture) -> void:
 	texture_rect.get_shader_material().set_shader_parameter("use_transparency", use_transparency)
 
 #region MOUSE INPUT
-
-func _unhandled_input(event: InputEvent) -> void:
-	PixelPerfect.get_mouse_screen_position()
 
 #endregion

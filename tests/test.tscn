@@ -1,20 +1,21 @@
 [gd_scene load_steps=8 format=3 uid="uid://b8ptpdrkdbage"]
 
-[ext_resource type="PackedScene" uid="uid://bwtvr4dfhhj1o" path="res://tests/scenes/content.tscn" id="1_j15u7"]
+[ext_resource type="PackedScene" uid="uid://bwtvr4dfhhj1o" path="res://tests/scenes/content.tscn" id="1_uofsi"]
 [ext_resource type="PackedScene" uid="uid://dodqwbu54bcq1" path="res://addons/pixel_perfect/modules/pixel_perfect_palette.tscn" id="3_2rcqd"]
 [ext_resource type="PackedScene" uid="uid://lfwkvoblx353" path="res://addons/pixel_perfect/modules/pixel_perfect_window.tscn" id="5_dsb46"]
-[ext_resource type="Texture2D" uid="uid://drvl0ebe6itye" path="res://addons/pixel_perfect/demo_palettes/berry-shake-32x.png" id="5_oqkue"]
 [ext_resource type="PackedScene" uid="uid://ltlslb8vhgsy" path="res://addons/pixel_perfect/modules/pixel_perfect_integer_resizer.tscn" id="5_uofsi"]
 [ext_resource type="PackedScene" uid="uid://cnplgbvjtgsqd" path="res://addons/pixel_perfect/modules/pixel_perfect_crop_resizer.tscn" id="6_uofsi"]
 [ext_resource type="PackedScene" uid="uid://ddbswfwvl52l4" path="res://addons/pixel_perfect/modules/pixel_perfect_centerer.tscn" id="7_jenrn"]
+[ext_resource type="PackedScene" uid="uid://c6hisput72ln8" path="res://addons/pixel_perfect/pixel_perfect_transformations/pixel_perfect_transformer.tscn" id="7_mm0ke"]
 
 [node name="Test" type="Node2D"]
 
 [node name="SubViewport" type="SubViewport" parent="."]
 transparent_bg = true
-size = Vector2i(642, 362)
+handle_input_locally = false
+size = Vector2i(640, 360)
 
-[node name="Content" parent="SubViewport" instance=ExtResource("1_j15u7")]
+[node name="Content" parent="SubViewport" instance=ExtResource("1_uofsi")]
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
@@ -27,24 +28,27 @@ grow_vertical = 2
 color = Color(0, 0, 0, 1)
 
 [node name="PixelPerfectWindow" parent="CanvasLayer" node_paths=PackedStringArray("source_viewport", "resizer", "aligner") instance=ExtResource("5_dsb46")]
-offset_left = 91.0
-offset_top = 214.0
-offset_right = 731.0
-offset_bottom = 574.0
+offset_left = 117.5
+offset_top = 211.0
+offset_right = 757.5
+offset_bottom = 571.0
 scale = Vector2(2, 2)
 source_viewport = NodePath("../../SubViewport")
 resizer = NodePath("../PixelPerfectIntegerResizer")
 aligner = NodePath("../PixelPerfectCenterer")
+use_subpixel_smoothing = false
 use_transparency = false
 
 [node name="PixelPerfectPalette" parent="CanvasLayer" node_paths=PackedStringArray("window") instance=ExtResource("3_2rcqd")]
 window = NodePath("../PixelPerfectWindow")
-palette_texture = ExtResource("5_oqkue")
-accuracy_scale = 256
 palette_id = "color"
+distance_function = 0
 
 [node name="PixelPerfectIntegerResizer" parent="CanvasLayer" instance=ExtResource("5_uofsi")]
 
 [node name="PixelPerfectCropResizer" parent="CanvasLayer" instance=ExtResource("6_uofsi")]
 
 [node name="PixelPerfectCenterer" parent="CanvasLayer" instance=ExtResource("7_jenrn")]
+
+[node name="PixelPerfectTransformer" parent="CanvasLayer" node_paths=PackedStringArray("window") instance=ExtResource("7_mm0ke")]
+window = NodePath("../PixelPerfectWindow")

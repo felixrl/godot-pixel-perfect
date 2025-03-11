@@ -5,6 +5,7 @@ var time: float = 0
 func _process(delta):
 	rotation_degrees += 10 * delta
 	
+	print(get_viewport_rect())
 	# time += delta
 	# position = Vector2(0, -sin(time) * 32)
 	
@@ -13,4 +14,5 @@ func _process(delta):
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion:
+		#print("MAN " + str(event.global_position))
 		global_position = event.global_position

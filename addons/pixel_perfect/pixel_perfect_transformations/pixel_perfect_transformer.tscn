@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://c6hisput72ln8"]
+
+[ext_resource type="Script" uid="uid://daiqvckwdi6ge" path="res://addons/pixel_perfect/pixel_perfect_transformations/pixel_perfect_transformer.gd" id="1_lblew"]
+
+[node name="PixelPerfectTransformer" type="Node"]
+script = ExtResource("1_lblew")

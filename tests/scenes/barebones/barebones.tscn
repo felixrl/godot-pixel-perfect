@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3 uid="uid://cxanq3oipp22t"]
+
+[ext_resource type="Script" uid="uid://7elerhrr6aiv" path="res://tests/scenes/barebones/test_camera.gd" id="1_hqmsg"]
+[ext_resource type="Script" uid="uid://c4splnpvamlsv" path="res://tests/scenes/barebones/pixel_mover.gd" id="2_chpyw"]
+[ext_resource type="Texture2D" uid="uid://ddr1vrf04uw36" path="res://tests/police_car_01.png" id="2_hqmsg"]
+
+[node name="Barebones" type="Node2D"]
+
+[node name="Camera2D" type="Camera2D" parent="." node_paths=PackedStringArray("test_pixel")]
+script = ExtResource("1_hqmsg")
+test_pixel = NodePath("../Sprite2D")
+
+[node name="Polygon2D" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-18, -12, 21, -14, 14, 16, -15, 16)
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_hqmsg")
+script = ExtResource("2_chpyw")

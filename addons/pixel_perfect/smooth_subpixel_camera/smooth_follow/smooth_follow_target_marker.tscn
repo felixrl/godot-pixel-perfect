@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://bh43qoone5e5s"]
+
+[ext_resource type="Script" uid="uid://q3dhn5opmu80" path="res://addons/pixel_perfect/smooth_subpixel_camera/smooth_follow/smooth_follow_target_marker.gd" id="1_atbaq"]
+
+[node name="SmoothFollowTargetMarker" type="Marker2D"]
+script = ExtResource("1_atbaq")
